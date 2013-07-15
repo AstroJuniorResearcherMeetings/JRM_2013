@@ -1,0 +1,63 @@
+#!/bin/bash
+################################################################
+# Bash prompt configuration, check my post:
+# http://apwhelan.blogspot.com/2012/08/bash-prompt-coloring.html
+#
+# See link for fill reference:
+# http://bash-hackers.org/wiki/doku.php/scripting/terminalcodes
+#
+# \033 indicates a control character is to follow
+#
+# For full list, "man bash" and search to 2nd "PROMPTING" or see:
+# http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+# also: http://www.yolinux.com/HOWTO/Bash-Prompt-HOWTO.html
+#
+# \u : username
+# \h : host to first "."
+# \w : current full working directory
+# \W : last part of path
+
+# See: http://networking.ringofsaturn.com/Unix/Bash-prompts.php
+# for a longer list of colours.
+
+BLACK="\[\033[0;30m\]"
+BLUE="\[\033[0;34m\]"
+GREEN="\[\033[0;32m\]"
+CYAN="\[\033[0;36m\]"
+RED="\[\033[0;31m\]"
+PURPLE="\[\033[0;35m\]"
+BROWN="\[\033[0;33m\]"
+LIGHT_GRAY="\[\033[0;37m\]"
+DARK_GRAY="\[\033[1;30m\]"
+BOLD_BLUE="\[\033[1;34m\]"
+BOLD_GREEN="\[\033[1;32m\]"
+BOLD_CYAN="\[\033[1;36m\]"
+BOLD_RED="\[\033[1;31m\]"
+BOLD_PURPLE="\[\033[1;35m\]"
+YELLOW="\[\033[1;33m\]"
+WHITE="\[\033[1;37m\]"
+RESET="\[\033[m\]"
+
+# Credit for these functions goes to
+# https://github.com/mathiasbynens/dotfiles/blob/master/.bash_prompt
+function parse_git_dirty() {
+    [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo " (!)"
+}
+
+function parse_git_branch() {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e"s/* \(.*\)/\1$(parse_git_dirty)/"
+}
+
+export SCREEN_TITLE=""
+
+if [ "$TERM" == "screen" ]; then
+    export SCREEN_TITLE="$WHITE[SCREEN] "
+fi
+
+
+# Define the primary prompt line
+# export PS1="$SCREEN_TITLE$BOLD_RED\h$RESET $BOLD_GREEN[\w]$BOLD_PURPLE \$([[ -n \$(git branch 2> /dev/null) ]] && echo \"git:\")\$(parse_git_branch)$GREEN% $RESET"
+export PS1="$BOLD_GREEN[\W]$BOLD_PURPLE\$([[ -n \$(git branch 2> /dev/null) ]]&& echo \"git:\")\$(parse_git_branch)$GREEN$ $RESET"
+
+# For multi-line commands:
+export PS2="$BOLD_GREEN> $RESET"

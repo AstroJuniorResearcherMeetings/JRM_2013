@@ -1,0 +1,128 @@
+#!/bin/bash
+# The #! (hash-bang) allows for this to be run as an executable from the command line (i.e. the shell will recognize it). It also informs Emacs how to do syntax highlighting
+
+
+# The bashrc is a file that the bash shell looks for upon start up in the location ~/.bashrc 
+# It is a file which is run right upon creating a new instance of the shell.
+# Both tcsh and csh shells have similar files (~/.tcshrc and ~/.cshrc respectively)
+# tcsh and csh have syntax differences from bashrc which should be looked up
+
+#------------------------------------------------------------------------------#
+# Welcome message with each new terminal
+#------------------------------------------------------------------------------#
+echo "Thank you for opening a new terminal!"
+
+#------------------------------------------------------------------------------#
+# Default location 
+#------------------------------------------------------------------------------#
+# the shell opens in the home directory but I want it in another directory
+if [${PWD} == '/Users/dylangregersen']; then cd Desktop/Astrophysics/; fi
+
+#------------------------------------------------------------------------------#
+# Set window title
+#------------------------------------------------------------------------------#
+# this appears at the top of the frame
+PROMPT_COMMAND='echo -ne "\033]0; ${PWD}\007"'
+
+#------------------------------------------------------------------------------#
+#Set command prompt
+#------------------------------------------------------------------------------#
+# \@ or \t or \T = add current time
+# \h or \H => add hostname
+# \u => username
+
+# this one shows the entire pathname in lime green:
+#PS1="\[\033[1;32m\][\w]$\[\033[0m\] "
+# This one shows the local directory name in lime green:
+# PS1="\[\033[1;32m\][\W]$\[\033[0m\] "
+# This one shows the command number and the local directory in white:
+# PS1="\[\037 \# [\W]:\[\037\] "
+source ~/.prompt
+# here I'm source the file "prompt" which has the parameters I want for my prompt
+
+
+#------------------------------------------------------------------------------#
+#Set Command Aliases
+#------------------------------------------------------------------------------#
+# these are some aliases for commands on the command line
+
+# these make the defaults interactive to prevent from mistaken overwritting
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='/bin/rm -i'
+
+# these add some features I was always typing out
+alias type='type -a'
+alias du='du -ch'
+alias lsl='ls -halrt'
+
+# a command alias to print a summary of information for the command chmod
+alias chmodinfo='echo -e "chmod information:\n 7 = full (111) \n 6 = read/write (110)\n 5 = read/exec (101)\n 4 = read (100)\n 3 = write/exec (011)\n 2 = write (010)\n 1 = exec (001)\n 0 = none (000)\n \n SHELL$ chmod 754 foo.txt\n  ^= gives user (u) full, group (g) read/exec,  and  others (o) read only"'
+
+
+alias y='echo YES!'
+alias n='echo NO!'
+
+alias allenv='env | less'
+
+# this will display thw which command output and the type output (the later)
+# was more often desired
+function which_type_function () {
+    echo 'which =====>'
+    /usr/bin/which $1
+    echo 'type ======>'
+    type $1
+}
+alias which='which_type_function'
+
+alias resource='source ~/.bashrc'
+
+#------------------------------------------------------------------------------#
+#Set 'ls' colors and options
+#------------------------------------------------------------------------------#
+export CLICOLOR=1
+export LSCOLORS=Gxfxcxdxbxegedabagacad
+
+#Set extended wildcards
+# % ls !(not_this_file.txt)
+shopt -s extglob
+
+#------------------------------------------------------------------------------#
+# Aliases for network connections
+#------------------------------------------------------------------------------#
+alias port1='echo Windows forwading enabled && ssh -Y username@astro03.astro.utah.edu'
+
+#------------------------------------------------------------------------------#
+# Text Editors
+#------------------------------------------------------------------------------#
+# for emacs
+alias em='/Applications/Emacs.app/Contents/MacOS/Emacs'
+export EDITOR='emacs -nw'
+
+# for textwrangler
+alias tw="open -a /Applications/TextWrangler.app/Contents/MacOS/TextWrangler"
+
+
+#------------------------------------------------------------------------------#
+# Python 
+#------------------------------------------------------------------------------#
+export PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:${PATH}
+
+export PYTHONPATH=/Applications/python/lib:/Library/Frameworks/Python.framework/Versions/Current/lib
+
+alias py='python'
+
+alias ipy='ipython'
+
+alias ipyn='ipython notebook'
+
+
+#------------------------------------------------------------------------------#
+# Misc.
+#------------------------------------------------------------------------------#
+
+
+
+
+
+

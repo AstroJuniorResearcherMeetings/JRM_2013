@@ -1,0 +1,2 @@
+This directory has tips and things for learning the Emacs text editor. Note that basic knowledge of Emacs can be useful because it has the capability of being typed within a terminal without a GUI. However, for you regular coding needs I recommend using a GUI version of Emacs (e.g. GNU_Emacs) or using another GUI text editor (e.g. TextWrangler, Eclipse)
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+# Configure the ssh 
+
+# * CHPC hostnames
+
+# ** Astronomy servers
+# astro03.astro.utah.edu
+# astro02.astro.utah.edu
+# astro01.astro.utah.edu
+
+# ** Cluster servers
+# updraft.chpc.utah.edu
+# sanddunearch.chpc.utah.edu
+# ember.chpc.utah.edu
+
+
+# NOTE: all examples here are fake. Replace the variable for HostName with the desired host (see CHPC options above) and replace User with your username on that host (the same username works for all the CHPC connections)
+
+# Login to the astro03 server for chpc
+Host astro
+     User u0123455
+     HostName astro03.astro.utah.edu
+     ForwardX11Trusted yes
+     ForwardAgent yes
+     Compression yes
+
+# Login to the astro02 server
+Host astro02
+     User u0123456
+     HostName astro02.astro.utah.edu
+     ForwardX11Trusted yes
+     ForwardAgent yes
+     Compression yes
+
+# fake example if you have to use a gateway server
+Host benderosu
+     User muna
+     Hostname bender.osu.edu
+     ProxyCommand ssh -q muna!gateway.edu nc %h %p
+
