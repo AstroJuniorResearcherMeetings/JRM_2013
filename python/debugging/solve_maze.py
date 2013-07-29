@@ -1,6 +1,9 @@
+
+
+#  import modules
 import numpy as np
 
-#direction strings
+# direction strings
 n = "n"
 s = "s"
 e = "e"
@@ -25,7 +28,8 @@ class Maze:
     def validate_move(self, position, direction):
         """return true if you can move direction from position"""
         new_x, new_y = self.move(position, direction)
-        return not self.walls[new_x, new_y]
+        check_direction = not self.walls[new_x, new_y]
+        return check_direction
 
     def move(self, position, direction):
         """get your position after moving a direction"""
@@ -37,52 +41,52 @@ class Maze:
         """return a list of all open neighboring positions and their directions"""
         neighbors = []
         directions = []
-        #note we used dir_ instead of dir as short for direction
-        #this is because dir is a reserved python key word
-        #so to avoid overwriting it we have appended an underscore 
-        #which is standard python
-        #for every direction
+        # note we used dir_ instead of dir as short for direction
+        # this is because dir is a reserved python key word
+        # so to avoid overwriting it we have appended an underscore 
+        # which is standard python
+        # for every direction
         for dir_ in [n, s, e, w]:
-            #check if we can go that direction
+            # check if we can go that direction
             if self.validate_move(position, dir_):
-                #if we can add the new position to our neighbors list
+                # if we can add the new position to our neighbors list
                 neighbors.append(self.move(position, dir_))
                 directions.append(dir_)
-        #return a list of neighbors and directions for getting there
+        # return a list of neighbors and directions for getting there
         return neighbors, directions
     
     def solve_me(self):
-        #add the start to positions to process
+        #  add the start to positions to process
         positions = [self.start]
-        #the path to the start node is the null string
+        #  the path to the start node is the null string
         paths = [""]
-        #we should keep track of where we have visited
+        #  we should keep track of where we have visited
         visited = np.zeros(self.walls.shape, dtype = bool)
         visited[self.start] = True
         while len(positions) > 0:
-            #get the next position to check
+            # get the next position to check
             cur_pos = positions.pop()
-            #and the associated path to it
+            # and the associated path to it
             cur_path = paths.pop()
-            #get all valid moves from that position
+            # get all valid moves from that position
             neighbors, directions = self.get_neighbors(cur_pos)
             for neighbor_idx in range(len(neighbors)):
                 cur_neighbor = neighbors[neighbor_idx]
                 cur_direction = directions[neighbor_idx]
-                #if the neighbor is not one we have visited before
+                # if the neighbor is not one we have visited before
                 if not visited[cur_neighbor]:
-                    #form the path from the start to the neighbor
+                    # form the path from the start to the neighbor
                     new_path = cur_path + cur_direction
-                    #if this neighbor is the end position we found a solution
+                    # if this neighbor is the end position we found a solution
                     if cur_neighbor == self.end:
                         return new_path
-                    #mark the new position as visited
+                    # mark the new position as visited
                     visited[cur_neighbor] = True
-                    #and add it to the positions to be processed
+                    # and add it to the positions to be processed
                     positions.append(cur_neighbor)
-                    #along with the path to it
+                    # along with the path to it
                     paths.append(new_path)
-        #if we don't find a solution there isn't one
+        # if we don't find a solution there isn't one
         print "I'm Unsolvable!"
         return None
                     
@@ -93,36 +97,38 @@ def load_maze(file_name, wall_char="#", start_char="S", end_char="E"):
     a maze file must have only a single start_char and a single end_char
     defining the start and finish points of the maze.
     """
-    #open the file and read the lines
+    # open the file and read the lines
     maze_lines = open(file_name).readlines()
-    #find the dimensions of the maze
+    # find the dimensions of the maze
     n_rows = len(maze_lines)
     n_cols = len(maze_lines[0])
     walls = np.zeros((n_rows, n_cols), dtype = bool)
-    #iterate over the rows and columns
+    # iterate over the rows and columns
     for row_idx in range(n_rows):
         for col_idx in range(n_cols):
             cur_char = maze_lines[row_idx][col_idx]
-            #if we have a wall character mark wall as true
+            # if we have a wall character mark wall as true
             if cur_char == wall_char:
                 walls[row_idx, col_idx] = True
             else:
-                #check for start and finish points
+                # check for start and finish points
                 if cur_char == start_char:
                     start_pos = row_idx, col_idx
                 elif cur_char == end_char:
                     end_pos = row_idx, col_idx
-    return Maze(walls, start_pos, end_pos)
 
+    # creating an instance/object of the Maze class
+    maze_object = Maze(walls, start_pos, end_pos)
+    return maze_object
 
 if __name__ == "__main__":
     import sys
-    #check that we have a maze file name passed in and only one
+    # check that we have a maze file name passed in and only one
     assert len(sys.argv) == 2
-    #get the filename from the command line
+    # get the filename from the command line
     maze_name = sys.argv[1]
-    #load the maze
+    # load the maze
     maze = load_maze(maze_name)
-    #make it solve itself
+    # make it solve itself
     soln =  maze.solve_me()
     print "a solution is", soln
