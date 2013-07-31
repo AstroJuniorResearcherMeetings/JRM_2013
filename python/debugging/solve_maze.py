@@ -25,6 +25,40 @@ class Maze:
         self.end = end_position
         self.direction_deltas = {n:(-1, 0), s:(1, 0), e:(0, 1), w:(0, -1)}
 
+
+    def __str__ (self):
+        """
+        This is a magic method which is called everytime you run
+        the function str on the maze_object
+
+        >>> str(maze_object)
+        >>> print(maze_object)
+
+        """
+
+        string_representation = ''
+        # cycle through all the rows and columns and create a string
+        # which replaces blank spaces with the values for the 
+        # representation
+        for row_idx in xrange(self.walls.shape[0]):
+            for col_idx in xrange(self.walls.shape[1]):
+                pos = (row_idx,col_idx)
+                space = self.walls[row_idx][col_idx]
+
+                # match against types of characters
+                if pos == self.start:
+                    string_representation += 'S'
+                elif pos == self.end:
+                    string_representation += 'E'
+                elif space:
+                    string_representation += '#'
+                else:
+                    string_representation += ' '
+
+            string_representation += '\n'
+        return string_representation
+
+
     def validate_move(self, position, direction):
         """return true if you can move direction from position"""
         new_x, new_y = self.move(position, direction)
@@ -106,7 +140,11 @@ def load_maze(file_name, wall_char="#", start_char="S", end_char="E"):
     # iterate over the rows and columns
     for row_idx in range(n_rows):
         for col_idx in range(n_cols):
-            cur_char = maze_lines[row_idx][col_idx]
+            try:
+                cur_char = maze_lines[row_idx][col_idx]
+            except IndexError:
+                raise IOError("The maze file you gave is not a square based on the first row")
+
             # if we have a wall character mark wall as true
             if cur_char == wall_char:
                 walls[row_idx, col_idx] = True
@@ -121,14 +159,14 @@ def load_maze(file_name, wall_char="#", start_char="S", end_char="E"):
     maze_object = Maze(walls, start_pos, end_pos)
     return maze_object
 
-if __name__ == "__main__":
-    import sys
-    # check that we have a maze file name passed in and only one
-    assert len(sys.argv) == 2
-    # get the filename from the command line
-    maze_name = sys.argv[1]
-    # load the maze
-    maze = load_maze(maze_name)
-    # make it solve itself
-    soln =  maze.solve_me()
-    print "a solution is", soln
+# if __name__ == "__main__":
+#     import sys
+#     # check that we have a maze file name passed in and only one
+#     assert len(sys.argv) == 2
+#     # get the filename from the command line
+#     maze_name = sys.argv[1]
+#     # load the maze
+#     maze = load_maze(maze_name)
+#     # make it solve itself
+#     soln =  maze.solve_me()
+#     print "a solution is", soln
