@@ -127,6 +127,9 @@ The internet has many useful tools
 
 * [ADS](http://adsabs.harvard.edu/abstract_service.html) - A common database for many papers. 
 
+* [Astrobites](astrobites.com) - A graduate student written summary of recent papers. Good summary for understanding the main results of a paper.
+
+
 ### Data
 
 * [SIMBAD](http://simbad.u-strasbg.fr/simbad/sim-fid) - A database of astronomical objects. There is compiled information and references for many thousands of objects.
