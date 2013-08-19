@@ -5,7 +5,7 @@ import scipy.optimize
 import scipy.integrate
 
 def get_gaussian(wvs, center, g_width, g_depth, continuum):
-    return continuum*(1.0 - g_depth*np.exp(-0.5*(wvs-center/g_width)**2))
+    return continuum*1.0 - g_depth*np.exp(-0.5*((wvs-center)/g_width)**2)
 
 class WidthMeasurement:
     
@@ -50,7 +50,7 @@ class WidthFinder:
     
     def set_right(self, wv):
         self.c_right = wv
-
+    
     def fit_gaussian(self):
         try:
             assert self.c_left != None
@@ -59,10 +59,6 @@ class WidthFinder:
             fit_mask *= (self.wvs <= self.c_right)
             masked_wvs = self.wvs[fit_mask]
             masked_flux = self.flux[fit_mask]
-            def g_error(param_vec):
-                gaussian = get_gaussian(masked_wvs, *param_vec)
-                return np.sum((masked_flux-gaussian)**2)
-            
             #create guess gaussian parameters to start with
             fl_med = np.median(masked_flux)
             cont_guess = np.median(masked_flux[masked_flux > fl_med])
@@ -72,12 +68,30 @@ class WidthFinder:
             sq_diffs = (masked_wvs-cent_guess)**2
             rms_diff = np.sqrt(np.sum(sq_diffs*flux_decr)/decr_sum)
             width_guess = rms_diff
-            depth_guess = np.min(decr_sum)
+            depth_guess = np.max(flux_decr)
+            #import pdb; pdb.set_trace()
             guess_vec = np.array([cent_guess, width_guess, depth_guess, cont_guess])
+            print guess_vec
+            guess_gau = get_gaussian(masked_wvs, *guess_vec)
+            self.ax.plot(masked_wvs, guess_gau, c="k")
             #start the optimization running
+            def g_error(param_vec):
+                gaussian = get_gaussian(masked_wvs, *param_vec)
+                error =  np.sum((masked_flux-gaussian)**2)
+                cent_diff = np.abs(cent_guess-param_vec[0])
+                diff_thresh = 0.1
+                if cent_diff > diff_thresh:
+                    cent_penalty = (cent_diff-diff_thresh)**2
+                else:
+                    cent_penalty = 0.0
+                return error+cent_penalty
             fit_res = scipy.optimize.fmin(g_error, guess_vec, maxfun=10000)
             #import pdb; pdb.set_trace()
             fcent, fwidth, fdepth, fcont = fit_res
+            #update the fit plot
+            fgau = get_gaussian(masked_wvs, fcent, fwidth, fdepth, fcont)
+            self.fit_plot.set_xdata(masked_wvs)
+            self.fit_plot.set_ydata(fgau)
             #carry out simpsons rule integration between the left and right
             integrated_width = scipy.integrate.simps(fcont-masked_flux, masked_wvs)
             self.c_measurement = WidthMeasurement(fcent, self.c_left, self.c_right, 
@@ -101,6 +115,7 @@ class WidthFinder:
         elif key == "a":
             if self.c_measurement != None:
                 self.measurements.append(self.c_measurement)
+        self.canvas.draw()
 
 if __name__ == "__main__":
 
